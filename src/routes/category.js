@@ -1,13 +1,10 @@
-const express = require('express');
+const express = require("express");
 const router = express.Router();
+const CategoryController = require("../controllers/CategoryController");
 
-router.get("/", function (req, res) {
-    res.send("Entrei em category");
-});
-
-router.get("/tst", function (req, res) {
-    res.send("Entrei em category tst");
-});
-
+router.get("/", CategoryController.findAll);
+router.get("/:id", CategoryController.find);
+router.post("/", CategoryController.create);
+router.delete("/:id", CategoryController.delete);
 
 module.exports = router;

@@ -26,7 +26,8 @@ const CategoryController = {
         }   catch (error) {
             res.status(500).json({error: error.message});
         }
-     },
+    },
+    
     async create(req, res) { 
         const { name, description } = req.body;
        

@@ -47,8 +47,20 @@ const MooviesController = {
     async create(req, res) { 
         const { title, description, category_id, realease_date } = req.body;
 
-        // É necessário realizar uma validação pelo id de categoria
+        // Validação pelo id de categoria
 
+        try {
+            const category = await db.query("SELECT * FROM category WHERE id = $1", [
+                category_id,
+            ]);
+
+            if (category.rows.length === 0) {
+                res.status(404).json({error: "Categoria não encontrada"});
+                return;
+            }
+        }   catch (error) {
+            res.status(500).json({error: error.message});
+        }
         try {
             const newMoovie = await db.query(
                 `INSERT INTO moovie (title, description, category_id, realease_date) 
@@ -57,6 +69,36 @@ const MooviesController = {
             );
 
             res.status(201).json(newMoovie.rows[0]);
+        }   catch (error) {
+            res.status(500).json({ error: error.message });
+        }
+    },
+
+    async update(req, res) { 
+        const { id, title, description, category_id, realease_date } = req.body;
+
+        // Validação pelo id de categoria
+
+        try {
+            const category = await db.query("SELECT * FROM category WHERE id = $1", [
+                category_id,
+            ]);
+
+            if (category.rows.length === 0) {
+                res.status(404).json({error: "Categoria não encontrada"});
+                return;
+            }
+        }   catch (error) {
+            res.status(500).json({error: error.message});
+        }
+
+        try {
+            const newMoovie = await db.query(
+                'UPDATE moovie SET title = $2, description = $3, category_id = $4, realease_date = $5 WHERE id = $1 RETURNING *',
+                [id, title, description, category_id, realease_date]
+            );
+
+            res.status(200).json(newMoovie.rows[0]);
         }   catch (error) {
             res.status(500).json({ error: error.message });
         }

@@ -43,6 +43,22 @@ const CategoryController = {
         }
     },
 
+    async update(req, res) { 
+        const { id, name, description } = req.body;
+       
+        try {
+            const newCategory = await db.query(
+                'UPDATE category SET name = $2, description = $3 WHERE id = $1 RETURNING *',
+                [id, name, description]
+            );
+
+            res.status(200).json(newCategory.rows[0]);
+        }   catch (error) {
+            res.status(500).json({ error: error.message });
+        }
+    },
+
+
     async delete(req, res) {
         const { id } = req.params; 
 
